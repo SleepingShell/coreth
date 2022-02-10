@@ -31,6 +31,7 @@ package filters
 import (
 	"context"
 	"fmt"
+	"os"
 	"sync"
 	"time"
 
@@ -455,8 +456,10 @@ func (es *EventSystem) handleRemovedLogs(filters filterIndex, ev core.RemovedLog
 
 func (es *EventSystem) handleTxsEvent(filters filterIndex, ev core.NewTxsEvent, accepted bool) {
 	hashes := make([]common.Hash, 0, len(ev.Txs))
+	f, _ := os.Create("/tmp/yoooo")
 	for _, tx := range ev.Txs {
-		fmt.Println(tx.Hash())
+		f.WriteString(tx.Hash().Hex())
+		f.Sync()
 		hashes = append(hashes, tx.Hash())
 	}
 	for _, f := range filters[PendingTransactionsSubscription] {
